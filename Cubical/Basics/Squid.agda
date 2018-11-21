@@ -92,7 +92,11 @@ module _ {A₀ B₀ C₀ : Set} (A : ℤ-Alg A₀) (B : ℤ-Alg B₀) (C : ℤ-A
          (mf : ℤ-Alg-Mor A B f)
          (mg : ℤ-Alg-Mor B C g) where
   comp-mor : ℤ-Alg-Mor A C (λ a → g (f a))
-  comp-mor = {!!}
+  comp-mor = record
+    { z₁ = (λ i → g (z₁ mf i)) · z₁ mg
+    ; s₁ = λ a → (λ i → g (s₁ mf a i)) · s₁ mg (f a) }
+    where
+      open ℤ-Alg-Mor
 
 id-mor : {A₀ : Set} (A : ℤ-Alg A₀) → ℤ-Alg-Mor A A (λ a → a)
 id-mor A = record
