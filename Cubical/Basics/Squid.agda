@@ -73,12 +73,38 @@ module _ {A₀ B₀ : Set} (A : ℤ-Alg A₀) (B : ℤ-Alg B₀) (f : A₀ → B
       s₁ : {a : A₀}{b : B₀} → f a ≡ b → f (s A a) ≡ s B b
       s₁ {a} q = ps₁ m a · λ i → s B (q i)
 
+      e₁ : {a : A₀}{b : B₀} → isBiInv (s₁ {a} {b})
+      e₁ = {!!}
+
+      s₁-inv : {a : A₀}{b : B₀} → f (s A a) ≡ (s B b) → f a ≡ b
+      s₁-inv = isBiInv.g e₁
+
+      hp₁ : {a : A₀}{b : B₀} → f a ≡ b → f (s A (p A a)) ≡ s B (p B b)
+      hp₁ {a} {b} q i = hcomp (λ { j (i = i0) → f (α A a (~ j))
+                                 ; j (i = i1) → α B b (~ j) }) (q i)
+
+      hp₁-fill : {a : A₀}{b : B₀} (q : f a ≡ b)
+               → PathP (λ j → f (α A a (~ j)) ≡ α B b (~ j))
+                       q (hp₁ q)
+      hp₁-fill {a} {b} q j i = hfill (λ { j (i = i0) → f (α A a (~ j))
+                                        ; j (i = i1) → α B b (~ j) }) (inc (q i)) j
+
       p₁ : {a : A₀}{b : B₀} → f a ≡ b → f (p A a) ≡ p B b
-      p₁ = {!!}
+      p₁ {a}{b} q = s₁-inv (hp₁ q)
 
       α₁ : {a : A₀}{b : B₀}(q : f a ≡ b)
          → PathP (λ i → f (α A a i) ≡ α B b i) (s₁ (p₁ q)) q
-      α₁ = {!!}
+      α₁ {a} {b} q j i = hcomp
+        (λ { k (i = i0) → f (α A a (j ∧ k))
+           ; k (i = i1) → α B b (j ∧ k)
+           ; k (j = i0) → s₁ (p₁ q) i
+           ; k (j = i1) → lem₂ k i }) (lem₁ j i)
+        where
+          lem₁ : s₁ (p₁ q) ≡ hp₁ q
+          lem₁ = isBiInv.inv e₁ (hp₁ q)
+
+          lem₂ : PathP (λ j → f (α A a j) ≡ α B b j) (hp₁ q) q
+          lem₂ j i = hp₁-fill q (~ j) i
 
       p₁' : {a : A₀}{b : B₀} → f a ≡ b → f (p' A a) ≡ p' B b
       p₁' = {!!}
